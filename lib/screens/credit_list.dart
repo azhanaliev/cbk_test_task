@@ -48,18 +48,24 @@ class _CreditListState extends State<CreditList> {
   }
 
   DataSource _getCalendarDataSource(
-      String createDate, int paymentDay, int loanMonth) {
+    String createDate,
+    int paymentDay,
+    int loanMonth,
+    List<String> workdays,
+    List<String> holidays,
+  ) {
     List appointments = [];
     DateTime startTime = DateFormat("dd.MM.yyyy").parse(createDate);
-    for (var i = 1; i < loanMonth; i++) {
+    for (var i = 1; i < loanMonth + 1; i++) {
       var payDay = DateTime(
         startTime.year,
         startTime.month + i,
         paymentDay,
       );
-      if (payDay.weekday == 6) {
+      print(payDay.toString());
+      if (payDay.weekday == 6 || workdays.contains(payDay.toString())) {
         payDay = payDay.add(const Duration(days: 2));
-      } else if (payDay.weekday == 7) {
+      } else if (payDay.weekday == 7 || workdays.contains(payDay.toString())) {
         payDay = payDay.add(const Duration(days: 1));
       }
       appointments.add(Appointment(
@@ -102,6 +108,8 @@ class _CreditListState extends State<CreditList> {
                       item.takeDate,
                       item.paymentDay,
                       item.loanMonths,
+                      item.workDays,
+                      item.holidays,
                     ),
                     view: CalendarView.month,
                   ),
